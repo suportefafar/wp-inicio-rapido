@@ -1,0 +1,26 @@
+services:
+  awesome-website:
+    image: wordpress:${AWESOME_WEBSITE_IMAGE_VERSION}
+    ports:
+      - mode: ingress
+        target: 80
+        published: "${AWESOME_WEBSITE_HTTP_PORT}"
+        protocol: tcp
+    environment:
+      WORDPRESS_DB_HOST: ${AWESOME_WEBSITE_DB_HOST}
+      WORDPRESS_DB_USER: ${AWESOME_WEBSITE_DB_USER}
+      WORDPRESS_DB_NAME: ${AWESOME_WEBSITE_DB_NAME}
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+          # pids: 2
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s

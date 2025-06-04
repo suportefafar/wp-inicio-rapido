@@ -11,7 +11,9 @@ Uma vez já instalado, execute:
 ```
 git clone https://github.com/suportefafar/wp-inicio-rapido.git
 cd wp-inicio-rapido/
-docker compose up -d
+./up.dev.sh
+# Ou
+./up.prod.sh
 ```
 
 ## Troubleshooting
@@ -19,7 +21,9 @@ docker compose up -d
 Caso tenha problema de premissão ao executar o comando a cima, utilize-o com **sudo**:
 
 ```
-sudo docker compose up -d
+sudo ./up.dev.sh
+# Ou
+sudo ./up.prod.sh
 ```
 
 Ou dê premissão ao seu usuário para utilizar o docker, colocando-o no grupo _docker_:

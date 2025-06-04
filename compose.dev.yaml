@@ -1,0 +1,52 @@
+services:
+  awesome-website:
+    environment:
+      WORDPRESS_DB_HOST: ${AWESOME_WEBSITE_DB_HOST}
+      WORDPRESS_DB_USER: ${AWESOME_WEBSITE_DB_USER}
+      WORDPRESS_DB_NAME: ${AWESOME_WEBSITE_DB_NAME}
+      WORDPRESS_DB_PASSWORD: ${AWESOME_WEBSITE_DB_PASSWORD}
+    volumes:
+      - type: bind
+        source: ./awesome-website/html
+        target: /var/www/html
+      - type: bind
+        source: ./local.ini
+        target: /usr/local/etc/php/conf.d/local.ini
+    user: ${UID}
+    post_start:
+      - command: chown -R ${UID}:${GID} /var/www/html
+        user: root
+
+  db:
+    image: mysql:${AWESOME_MYSQL_VERSION}
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${AWESOME_MYSQL_DATABASE}
+      MYSQL_USER: ${AWESOME_MYSQL_USER}
+      MYSQL_PASSWORD: ${AWESOME_MYSQL_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: "1"
+    volumes:
+      - type: volume
+        source: database-volume
+        target: /var/lib/mysql
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.50'
+          memory: 256M
+  phpmyadmin:
+    image: phpmyadmin:${PHPMYADMIN_IMAGE_VERSION}
+    environment:
+      PMA_HOST: ${PHPMYADMIN_HOST}
+    ports:
+      - mode: ingress
+        target: 80
+        published: "${PHPMYADMIN_HTTP_PORT}"
+        protocol: tcp
+    restart: unless-stopped
+
+volumes:
+  database-volume:

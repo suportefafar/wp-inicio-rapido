@@ -1,0 +1,14 @@
+services:
+  awesome-website:
+    environment:
+      WORDPRESS_DB_HOST: ${AWESOME_WEBSITE_DB_HOST}
+      WORDPRESS_DB_USER: ${AWESOME_WEBSITE_DB_USER}
+      WORDPRESS_DB_NAME: ${AWESOME_WEBSITE_DB_NAME}
+      WORDPRESS_DB_PASSWORD_FILE: ${AWESOME_WEBSITE_DB_PASSWORD_FILE}
+    extra_hosts:
+      - "www.farmacia.ufmg.br:10.10.10.1"
+    restart_policy:
+        condition: on-failure
+        delay: 5s
+        # max_attempts: 3
+        window: 120s
