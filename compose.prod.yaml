@@ -4,11 +4,42 @@ services:
       WORDPRESS_DB_HOST: ${AWESOME_WEBSITE_DB_HOST}
       WORDPRESS_DB_USER: ${AWESOME_WEBSITE_DB_USER}
       WORDPRESS_DB_NAME: ${AWESOME_WEBSITE_DB_NAME}
-      WORDPRESS_DB_PASSWORD_FILE: ${AWESOME_WEBSITE_DB_PASSWORD_FILE}
-    extra_hosts:
-      - "www.farmacia.ufmg.br:10.10.10.1"
-    restart_policy:
-        condition: on-failure
-        delay: 5s
-        # max_attempts: 3
-        window: 120s
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/awesome-website-db-pass
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+      interval: 40s
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    # A migração de dados pode ser feita por plugins, como
+    # o All-in-One WP Migration and Backup.
+    # Caso, contrário, edite o arquivo Dockerfile, e
+    # utilize a instrução COPY.
+    # Diga não ao bind mount em produção!
+    volumes:
+      - type: volume
+        source: awesome-website-wp-content
+        target: /var/www/html/wp-content
+    secrets:
+      - source: awesome-website-db-pass
+        mode: 0444 # Legível por owner/group/others (default: 0400)
+    # extra_hosts:
+    #  - "www.farmacia.ufmg.br:DOCKER_HOST_IP"
+    #  - "farmacia.ufmg.br:DOCKER_HOST_IP"
+
+  autoheal:
+    restart: always
+    image: willfarrell/autoheal
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=all
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  awesome-website-wp-content:
+  database-volume:
+
+secrets:
+  awesome-website-db-pass:
+    # file: ./awesome-website/db-pass.txt
+    environment: AWESOME_WEBSITE_DB_PASSWORD

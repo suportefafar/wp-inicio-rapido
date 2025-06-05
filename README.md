@@ -14,7 +14,29 @@ cd wp-inicio-rapido/
 ./up.dev.sh
 # Ou
 ./up.prod.sh
+
 ```
+
+## Incluso
+Segue a lista de componentes e práticas inclusas:  
+
+Para o ambiente dev:
+- Stage dev no Dockerfile
+- bind mount dos arquivos WP
+- bind mount do arquivo de configurações PHP(local.ini)
+- Correção de permissão das pastas montadas localmente
+- Banco de dados (MySQL)
+- PHPMyAdmin
+- XDebug3
+
+Para o ambiente prod:
+- Healthcheck
+- Autoheal
+- Secrets para senha do bando de dados
+
+Básico de ambos:
+- Uso de variáveis de ambientes
+- Dockerfile multi-stage
 
 ## Troubleshooting
 
@@ -53,3 +75,7 @@ Exemplo:
 ```
 chico adm cdrom sudo dip plugdev users lpadmin docker
 ```
+## Referências
+- https://www.wpdiaries.com/wordpress-with-xdebug-for-docker/
+- https://jasonterando.medium.com/debugging-with-visual-studio-code-xdebug-and-docker-on-windows-b63a10b0dec
+- https://docs.docker.com/compose/

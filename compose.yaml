@@ -1,6 +1,12 @@
 services:
   awesome-website:
-    image: wordpress:${AWESOME_WEBSITE_IMAGE_VERSION}
+    # image: wordpress:${AWESOME_WEBSITE_IMAGE_VERSION}
+    build:
+      context: ./awesome-website/
+      dockerfile: Dockerfile
+      target: base
+      args:
+        AWESOME_WEBSITE_IMAGE_VERSION: ${AWESOME_WEBSITE_IMAGE_VERSION}
     ports:
       - mode: ingress
         target: 80
@@ -10,17 +16,13 @@ services:
       WORDPRESS_DB_HOST: ${AWESOME_WEBSITE_DB_HOST}
       WORDPRESS_DB_USER: ${AWESOME_WEBSITE_DB_USER}
       WORDPRESS_DB_NAME: ${AWESOME_WEBSITE_DB_NAME}
+    restart: unless-stopped
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 512M
           # pids: 2
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
